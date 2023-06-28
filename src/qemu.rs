@@ -50,6 +50,8 @@ pub struct Qemu {
 
 const QEMU_DEFAULT_ARGS: &[&str] = &[
     "-nodefaults",
+    "-machine",
+    "virt",
     "-display",
     "none",
     "-m",
@@ -148,7 +150,7 @@ fn kvm_args() -> Vec<&'static str> {
         args.push("host");
     } else {
         args.push("-cpu");
-        args.push("qemu64");
+        args.push("max");
     }
 
     args
@@ -243,7 +245,7 @@ fn kernel_args(kernel: &Path, init: &Path, additional_kargs: Option<&String>) ->
     cmdline.push("earlyprintk=serial,0,115200".into());
     // Disable userspace writing ratelimits
     cmdline.push("printk.devkmsg=on".into());
-    cmdline.push("console=0,115200".into());
+    //cmdline.push("console=0,115200".into());
     cmdline.push("loglevel=7".into());
 
     // We are not using RAID and this will help speed up boot
@@ -420,6 +422,8 @@ impl Qemu {
             panic!("Config validation should've enforced XOR");
         }
 
+        let args = c.get_args().map(|a| a.to_string_lossy()).join(" ");
+        println!("qemu invocation: {} {}", c.get_program().to_string_lossy(), args);
         if log_enabled!(Level::Debug) {
             let args = c.get_args().map(|a| a.to_string_lossy()).join(" ");
             debug!(

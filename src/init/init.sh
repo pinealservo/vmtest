@@ -92,4 +92,4 @@ fi
 log "Located qemu-guest-agent virtio port: ${vport}"
 
 log "Spawning qemu-ga"
-qemu-ga --method=virtio-serial --path="$vport"
+/usr/sbin/qemu-ga --method=virtio-serial --path="$vport"
